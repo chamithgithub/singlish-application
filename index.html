@@ -1,0 +1,812 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Modern Singlish Converter</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #7E57C2;
+            --primary-light: #B085F5;
+            --primary-dark: #4D2C91;
+            --secondary: #26C6DA;
+            --secondary-dark: #0097A7;
+            --background: #121212;
+            --surface: #1E1E1E;
+            --surface-light: #2D2D2D;
+            --text-primary: #FFFFFF;
+            --text-secondary: #B0B0B0;
+            --success: #66BB6A;
+            --error: #EF5350;
+            --border-radius: 12px;
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+        }
+
+        body {
+            background-color: var(--background);
+            color: var(--text-primary);
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .app-container {
+            width: 100%;
+            max-width: 1200px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        /* Header Styles */
+        .app-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 0;
+            margin-bottom: 10px;
+            border-bottom: 1px solid var(--surface-light);
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .logo {
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            font-weight: bold;
+            font-family: 'Iskoola Pota', 'Iskoola Potha', 'Iskoola', sans-serif;
+        }
+
+        .titles {
+            line-height: 1.3;
+        }
+
+        .small-title {
+            font-size: 14px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: var(--secondary);
+        }
+
+        .main-title {
+            font-size: 28px;
+            font-weight: 700;
+            background: linear-gradient(90deg, var(--primary-light), var(--secondary));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .app-controls {
+            display: flex;
+            gap: 12px;
+        }
+
+        .icon-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--surface);
+            border: none;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .icon-btn:hover {
+            background: var(--surface-light);
+            transform: translateY(-2px);
+        }
+
+        /* Main Content */
+        .main-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            flex: 1;
+        }
+
+        @media (max-width: 768px) {
+            .main-container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .panel {
+            background: var(--surface);
+            border-radius: var(--border-radius);
+            padding: 25px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.25);
+            transition: var(--transition);
+        }
+
+        .panel:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.3);
+        }
+
+        .input-panel {
+            background: linear-gradient(145deg, var(--surface), var(--surface-light));
+        }
+
+        .output-panel {
+            background: linear-gradient(145deg, var(--surface), var(--surface-light));
+        }
+
+        .panel-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid var(--surface-light);
+        }
+
+        .panel-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--secondary);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .panel-title i {
+            font-size: 20px;
+        }
+
+        .action-btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 30px;
+            padding: 8px 20px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .action-btn:hover {
+            background: var(--primary-light);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(126, 87, 194, 0.3);
+        }
+
+        .action-btn:active {
+            transform: translateY(0);
+        }
+
+        .action-btn.copy {
+            background: var(--secondary);
+        }
+
+        .action-btn.copy:hover {
+            background: var(--secondary-dark);
+            box-shadow: 0 4px 8px rgba(38, 198, 218, 0.3);
+        }
+
+        /* Text Areas */
+        textarea, .output-area {
+            width: 100%;
+            min-height: 250px;
+            background: var(--surface-light);
+            border: 2px solid transparent;
+            border-radius: var(--border-radius);
+            padding: 20px;
+            font-size: 18px;
+            color: var(--text-primary);
+            resize: none;
+            outline: none;
+            transition: var(--transition);
+        }
+
+        textarea:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(126, 87, 194, 0.2);
+        }
+
+        .output-area {
+            font-size: 22px;
+            line-height: 1.6;
+            overflow-wrap: break-word;
+            font-family: 'Iskoola Pota', 'Iskoola Potha', 'Iskoola', sans-serif;
+        }
+
+        .placeholder {
+            color: var(--text-secondary);
+            font-style: italic;
+        }
+
+        /* Cheat Sheet */
+        .cheat-sheet {
+            grid-column: span 2;
+            margin-top: 10px;
+        }
+
+        @media (max-width: 768px) {
+            .cheat-sheet {
+                grid-column: span 1;
+            }
+        }
+
+        .section-title {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            color: var(--primary-light);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .section-title i {
+            font-size: 24px;
+        }
+
+        .scheme-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .scheme-card {
+            background: var(--surface);
+            border-radius: var(--border-radius);
+            padding: 20px;
+            transition: var(--transition);
+        }
+
+        .scheme-card:hover {
+            background: var(--surface-light);
+            transform: translateY(-3px);
+        }
+
+        .scheme-category {
+            color: var(--secondary);
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--surface-light);
+        }
+
+        .scheme-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .scheme-table td {
+            padding: 10px;
+            border-bottom: 1px solid var(--surface-light);
+            font-size: 14px;
+        }
+
+        .scheme-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .scheme-table .sinhala {
+            font-family: 'Iskoola Pota', 'Iskoola Potha', 'Iskoola', sans-serif;
+            font-size: 18px;
+        }
+
+        /* Footer */
+        .app-footer {
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid var(--surface-light);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        .version {
+            background: var(--surface);
+            padding: 6px 15px;
+            border-radius: 30px;
+            font-weight: 500;
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .fade-in {
+            animation: fadeIn 0.5s ease forwards;
+        }
+
+        /* Toast Notification */
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--surface);
+            color: var(--text-primary);
+            padding: 15px 25px;
+            border-radius: var(--border-radius);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            z-index: 1000;
+        }
+
+        .toast.show {
+            opacity: 1;
+        }
+
+        /* Responsive Adjustments */
+        @media (max-width: 480px) {
+            .app-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 15px;
+            }
+            
+            .app-controls {
+                align-self: flex-end;
+            }
+            
+            .panel {
+                padding: 20px 15px;
+            }
+            
+            .scheme-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <header class="app-header fade-in">
+            <div class="logo-container">
+                <div class="logo">සිං</div>
+                <div class="titles">
+                    <div class="small-title">Sinhala & English</div>
+                    <div class="main-title">Singlish Converter</div>
+                </div>
+            </div>
+            <div class="app-controls">
+                <button class="icon-btn" title="Info">
+                    <i class="fas fa-info-circle"></i>
+                </button>
+                <button class="icon-btn" title="Close" id="close-btn">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main-container">
+            <!-- Input Panel -->
+            <section class="panel input-panel fade-in" style="animation-delay: 0.1s;">
+                <div class="panel-header">
+                    <h2 class="panel-title">
+                        <i class="fas fa-keyboard"></i>
+                        Singlish Input
+                    </h2>
+                    <button id="clear-button" class="action-btn">
+                        <i class="fas fa-eraser"></i>
+                        Clear
+                    </button>
+                </div>
+                <textarea id="ta" placeholder="Type Singlish text here..." autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" onkeyup="startText();"></textarea>
+            </section>
+
+            <!-- Output Panel -->
+            <section class="panel output-panel fade-in" style="animation-delay: 0.2s;">
+                <div class="panel-header">
+                    <h2 class="panel-title">
+                        <i class="fas fa-font"></i>
+                        Sinhala Output
+                    </h2>
+                    <button id="copy-button" class="action-btn copy">
+                        <i class="fas fa-copy"></i>
+                        Copy Text
+                    </button>
+                </div>
+                <div id="output" class="output-area">
+                    <div class="placeholder">Sinhala text will appear here...</div>
+                </div>
+            </section>
+
+            <!-- Cheat Sheet -->
+            <section class="panel cheat-sheet fade-in" style="animation-delay: 0.3s;">
+                <h2 class="section-title">
+                    <i class="fas fa-book"></i>
+                    Transliteration Guide
+                </h2>
+                <div class="scheme-grid">
+                    <div class="scheme-card">
+                        <div class="scheme-category">Vowels</div>
+                        <table class="scheme-table">
+                            <tr>
+                                <td>a</td>
+                                <td class="sinhala">අ</td>
+                                <td>aa</td>
+                                <td class="sinhala">ආ</td>
+                            </tr>
+                            <tr>
+                                <td>A</td>
+                                <td class="sinhala">ඇ</td>
+                                <td>Aa</td>
+                                <td class="sinhala">ඈ</td>
+                            </tr>
+                            <tr>
+                                <td>i</td>
+                                <td class="sinhala">ඉ</td>
+                                <td>ii</td>
+                                <td class="sinhala">ඊ</td>
+                            </tr>
+                            <tr>
+                                <td>u</td>
+                                <td class="sinhala">උ</td>
+                                <td>uu</td>
+                                <td class="sinhala">ඌ</td>
+                            </tr>
+                        </table>
+                    </div>
+                    
+                    <div class="scheme-card">
+                        <div class="scheme-category">Consonants</div>
+                        <table class="scheme-table">
+                            <tr>
+                                <td>ka</td>
+                                <td class="sinhala">ක</td>
+                                <td>kha</td>
+                                <td class="sinhala">ඛ</td>
+                            </tr>
+                            <tr>
+                                <td>ga</td>
+                                <td class="sinhala">ග</td>
+                                <td>gha</td>
+                                <td class="sinhala">ඝ</td>
+                            </tr>
+                            <tr>
+                                <td>cha</td>
+                                <td class="sinhala">ච</td>
+                                <td>ja</td>
+                                <td class="sinhala">ජ</td>
+                            </tr>
+                            <tr>
+                                <td>ta</td>
+                                <td class="sinhala">ට</td>
+                                <td>tha</td>
+                                <td class="sinhala">ත</td>
+                            </tr>
+                        </table>
+                    </div>
+                    
+                    <div class="scheme-card">
+                        <div class="scheme-category">Special Characters</div>
+                        <table class="scheme-table">
+                            <tr>
+                                <td>a\n</td>
+                                <td class="sinhala">අං</td>
+                                <td>a\h</td>
+                                <td class="sinhala">අඃ</td>
+                            </tr>
+                            <tr>
+                                <td>ru</td>
+                                <td class="sinhala">කෘ</td>
+                                <td>ruu</td>
+                                <td class="sinhala">කෲ</td>
+                            </tr>
+                            <tr>
+                                <td>GNa</td>
+                                <td class="sinhala">ඥ</td>
+                                <td>nnga</td>
+                                <td class="sinhala">ඟ</td>
+                            </tr>
+                        </table>
+                    </div>
+                    
+                    <div class="scheme-card">
+                        <div class="scheme-category">Examples</div>
+                        <table class="scheme-table">
+                            <tr>
+                                <td>ayubowan</td>
+                                <td class="sinhala">ආයුබෝවන්</td>
+                            </tr>
+                            <tr>
+                                <td>kohomada</td>
+                                <td class="sinhala">කොහොමද</td>
+                            </tr>
+                            <tr>
+                                <td>sthuuthiyii</td>
+                                <td class="sinhala">ස්තූතියී</td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <!-- Footer -->
+        <footer class="app-footer fade-in" style="animation-delay: 0.4s;">
+            <div>2025 Singlish Converter Design by A.C.Dilshan</div>
+            <div class="version">v2.5.3</div>
+        </footer>
+
+        <!-- Toast Notification -->
+        <div class="toast" id="toast">
+            <i class="fas fa-check-circle"></i>
+            <span id="toast-message">Text copied to clipboard!</span>
+        </div>
+    </div>
+
+    <script>
+        // Core conversion function from UCSC
+        var text;
+        var nVowels;
+        var consonants = new Array()
+        var consonantsUni = new Array()
+        var vowels = new Array()
+        var vowelsUni = new Array()
+        var vowelModifiersUni = new Array()
+        var specialConsonants = new Array()
+        var specialConsonantsUni = new Array()
+        var specialCharUni = new Array()
+        var specialChar = new Array()
+
+        vowelsUni[0] = 'ඌ'; vowels[0] = 'oo'; vowelModifiersUni[0] = 'ූ';
+        vowelsUni[1] = 'ඕ'; vowels[1] = 'o\\)'; vowelModifiersUni[1] = 'ෝ';
+        vowelsUni[2] = 'ඕ'; vowels[2] = 'oe'; vowelModifiersUni[2] = 'ෝ';
+        vowelsUni[3] = 'ආ'; vowels[3] = 'aa'; vowelModifiersUni[3] = 'ා';
+        vowelsUni[4] = 'ආ'; vowels[4] = 'a\\)'; vowelModifiersUni[4] = 'ා';
+        vowelsUni[5] = 'ඈ'; vowels[5] = 'Aa'; vowelModifiersUni[5] = 'ෑ';
+        vowelsUni[6] = 'ඈ'; vowels[6] = 'A\\)'; vowelModifiersUni[6] = 'ෑ';
+        vowelsUni[7] = 'ඈ'; vowels[7] = 'ae'; vowelModifiersUni[7] = 'ෑ';
+        vowelsUni[8] = 'ඊ'; vowels[8] = 'ii'; vowelModifiersUni[8] = 'ී';
+        vowelsUni[9] = 'ඊ'; vowels[9] = 'i\\)'; vowelModifiersUni[9] = 'ී';
+        vowelsUni[10] = 'ඊ'; vowels[10] = 'ie'; vowelModifiersUni[10] = 'ී';
+        vowelsUni[11] = 'ඊ'; vowels[11] = 'ee'; vowelModifiersUni[11] = 'ී';
+        vowelsUni[12] = 'ඒ'; vowels[12] = 'ea'; vowelModifiersUni[12] = 'ේ';
+        vowelsUni[13] = 'ඒ'; vowels[13] = 'e\\)'; vowelModifiersUni[13] = 'ේ';
+        vowelsUni[14] = 'ඒ'; vowels[14] = 'ei'; vowelModifiersUni[14] = 'ේ';
+        vowelsUni[15] = 'ඌ'; vowels[15] = 'uu'; vowelModifiersUni[15] = 'ූ';
+        vowelsUni[16] = 'ඌ'; vowels[16] = 'u\\)'; vowelModifiersUni[16] = 'ූ';
+        vowelsUni[17] = 'ඖ'; vowels[17] = 'au'; vowelModifiersUni[17] = 'ෞ';
+        vowelsUni[18] = 'ඇ'; vowels[18] = '/\a'; vowelModifiersUni[18] = 'ැ';
+
+        vowelsUni[19] = 'අ'; vowels[19] = 'a'; vowelModifiersUni[19] = '';
+        vowelsUni[20] = 'ඇ'; vowels[20] = 'A'; vowelModifiersUni[20] = 'ැ';
+        vowelsUni[21] = 'ඉ'; vowels[21] = 'i'; vowelModifiersUni[21] = 'ි';
+        vowelsUni[22] = 'එ'; vowels[22] = 'e'; vowelModifiersUni[22] = 'ෙ';
+        vowelsUni[23] = 'උ'; vowels[23] = 'u'; vowelModifiersUni[23] = 'ු';
+        vowelsUni[24] = 'ඔ'; vowels[24] = 'o'; vowelModifiersUni[24] = 'ො';
+        vowelsUni[25] = 'ඓ'; vowels[25] = 'I'; vowelModifiersUni[25] = 'ෛ';
+        nVowels = 26;
+
+        specialConsonantsUni[0] = 'ං'; specialConsonants[0] = /\\n/g;
+        specialConsonantsUni[1] = 'ඃ'; specialConsonants[1] = /\\h/g;
+        specialConsonantsUni[2] = 'ඞ'; specialConsonants[2] = /\\N/g;
+        specialConsonantsUni[3] = 'ඍ'; specialConsonants[3] = /\\R/g;
+        //special characher Repaya
+        specialConsonantsUni[4] = 'ර්' + '\u200D'; specialConsonants[4] = /R/g;
+        specialConsonantsUni[5] = 'ර්' + '\u200D'; specialConsonants[5] = /\\r/g;
+
+        consonantsUni[0] = 'ඬ'; consonants[0] = 'nnd';
+        consonantsUni[1] = 'ඳ'; consonants[1] = 'nndh';
+        consonantsUni[2] = 'ඟ'; consonants[2] = 'nng';
+        consonantsUni[3] = 'ථ'; consonants[3] = 'Th';
+        consonantsUni[4] = 'ධ'; consonants[4] = 'Dh';
+        consonantsUni[5] = 'ඝ'; consonants[5] = 'gh';
+        consonantsUni[6] = 'ඡ'; consonants[6] = 'Ch';
+        consonantsUni[7] = 'ඵ'; consonants[7] = 'ph';
+        consonantsUni[8] = 'භ'; consonants[8] = 'bh';
+        consonantsUni[9] = 'ශ'; consonants[9] = 'sh';
+        consonantsUni[10] = 'ෂ'; consonants[10] = 'Sh';
+        consonantsUni[11] = 'ඥ'; consonants[11] = 'GN';
+        consonantsUni[12] = 'ඤ'; consonants[12] = 'KN';
+        consonantsUni[13] = 'ළු'; consonants[13] = 'Lu';
+        consonantsUni[14] = 'ද'; consonants[14] = 'dh';
+        consonantsUni[15] = 'ච'; consonants[15] = 'ch';
+        consonantsUni[16] = 'ඛ'; consonants[16] = 'kh';
+        consonantsUni[17] = 'ත'; consonants[17] = 'th';
+
+        consonantsUni[18] = 'ට'; consonants[18] = 't';
+        consonantsUni[19] = 'ක'; consonants[19] = 'k';
+        consonantsUni[20] = 'ඩ'; consonants[20] = 'd';
+        consonantsUni[21] = 'න'; consonants[21] = 'n';
+        consonantsUni[22] = 'ප'; consonants[22] = 'p';
+        consonantsUni[23] = 'බ'; consonants[23] = 'b';
+        consonantsUni[24] = 'ම'; consonants[24] = 'm';
+        consonantsUni[25] = '‍ය'; consonants[25] = '\\u005C' + 'y';
+        consonantsUni[26] = '‍ය'; consonants[26] = 'Y';
+        consonantsUni[27] = 'ය'; consonants[27] = 'y';
+        consonantsUni[28] = 'ජ'; consonants[28] = 'j';
+        consonantsUni[29] = 'ල'; consonants[29] = 'l';
+        consonantsUni[30] = 'ව'; consonants[30] = 'v';
+        consonantsUni[31] = 'ව'; consonants[31] = 'w';
+        consonantsUni[32] = 'ස'; consonants[32] = 's';
+        consonantsUni[33] = 'හ'; consonants[33] = 'h';
+        consonantsUni[34] = 'ණ'; consonants[34] = 'N';
+        consonantsUni[35] = 'ළ'; consonants[35] = 'L';
+        consonantsUni[36] = 'ඛ'; consonants[36] = 'K';
+        consonantsUni[37] = 'ඝ'; consonants[37] = 'G';
+        consonantsUni[38] = 'ඨ'; consonants[38] = 'T';
+        consonantsUni[39] = 'ඪ'; consonants[39] = 'D';
+        consonantsUni[40] = 'ඵ'; consonants[40] = 'P';
+        consonantsUni[41] = 'ඹ'; consonants[41] = 'B';
+        consonantsUni[42] = 'ෆ'; consonants[42] = 'f';
+        consonantsUni[43] = 'ඣ'; consonants[43] = 'q';
+        consonantsUni[44] = 'ග'; consonants[44] = 'g';
+        //last because we need to ommit this in dealing with Rakaransha
+        consonantsUni[45] = 'ර'; consonants[45] = 'r';
+
+        specialCharUni[0] = 'ෲ'; specialChar[0] = 'ruu';
+        specialCharUni[1] = 'ෘ'; specialChar[1] = 'ru';
+        //specialCharUni[2]='්‍ර'; specialChar[2]='ra';
+
+        function startText() {
+            var s, r, v;
+            text = document.getElementById("ta").value;
+            
+            // If input is empty, show placeholder
+            if (text.trim() === '') {
+                document.getElementById("output").innerHTML = '<div class="placeholder">Sinhala text will appear here...</div>';
+                return;
+            }
+            
+            //special consonents
+            for (var i = 0; i < specialConsonants.length; i++) {
+                text = text.replace(specialConsonants[i], specialConsonantsUni[i]);
+            }
+            //consonents + special Chars
+            for (var i = 0; i < specialCharUni.length; i++) {
+                for (var j = 0; j < consonants.length; j++) {
+                    s = consonants[j] + specialChar[i];
+                    v = consonantsUni[j] + specialCharUni[i];
+                    r = new RegExp(s, "g");
+                    text = text.replace(r, v);
+                }
+            }
+            //consonants + Rakaransha + vowel modifiers
+            for (var j = 0; j < consonants.length; j++) {
+                for (var i = 0; i < vowels.length; i++) {
+                    s = consonants[j] + "r" + vowels[i];
+                    v = consonantsUni[j] + "්‍ර" + vowelModifiersUni[i];
+                    r = new RegExp(s, "g");
+                    text = text.replace(r, v);
+                }
+                s = consonants[j] + "r";
+                v = consonantsUni[j] + "්‍ර";
+                r = new RegExp(s, "g");
+                text = text.replace(r, v);
+            }
+            //consonents + vowel modifiers
+            for (var i = 0; i < consonants.length; i++) {
+                for (var j = 0; j < nVowels; j++) {
+                    s = consonants[i] + vowels[j];
+                    v = consonantsUni[i] + vowelModifiersUni[j];
+                    r = new RegExp(s, "g");
+                    text = text.replace(r, v);
+                }
+            }
+
+            //consonents + HAL
+            for (var i = 0; i < consonants.length; i++) {
+                r = new RegExp(consonants[i], "g");
+                text = text.replace(r, consonantsUni[i] + "්");
+            }
+
+            //vowels
+            for (var i = 0; i < vowels.length; i++) {
+                r = new RegExp(vowels[i], "g");
+                text = text.replace(r, vowelsUni[i]);
+            }
+
+            document.getElementById("output").innerHTML = text;
+        }
+
+        //copy the text to clipboard on button click
+        function copyText() {
+            let outputDiv = document.getElementById("output");
+            let str = outputDiv.textContent || outputDiv.innerText;
+            
+            // If we have the placeholder text, don't copy it
+            if(str.includes("Sinhala text will appear here...")) {
+                showToast("Nothing to copy", true);
+                return;
+            }
+            
+            // Create new element
+            var el = document.createElement('textarea');
+            // Set value (string to be copied)
+            el.value = str;
+            // Set non-editable to avoid focus and move outside of view
+            el.setAttribute('readonly', '');
+            el.style.position = "absolute";
+            el.style.left = "-99999px";
+            document.body.appendChild(el);
+            // Select text inside element
+            el.select();
+            // Copy text to clipboard
+            document.execCommand('copy');
+            // Remove temporary element
+            document.body.removeChild(el);
+            
+            showToast("Text copied to clipboard!");
+        }
+
+        //clear text on button click
+        function clearText() {
+            document.getElementById("ta").value = "";
+            document.getElementById("output").innerHTML = '<div class="placeholder">Sinhala text will appear here...</div>';
+            showToast("Text cleared");
+        }
+
+        // Toast notification function
+        function showToast(message, isError = false) {
+            const toast = document.getElementById("toast");
+            const toastMessage = document.getElementById("toast-message");
+            
+            toastMessage.textContent = message;
+            toast.classList.add('show');
+            
+            if (isError) {
+                toast.style.background = 'var(--error)';
+                toast.innerHTML = `<i class="fas fa-exclamation-circle"></i> ${message}`;
+            } else {
+                toast.style.background = 'var(--success)';
+                toast.innerHTML = `<i class="fas fa-check-circle"></i> ${message}`;
+            }
+            
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            const closeBtn = document.getElementById('close-btn');
+            closeBtn.addEventListener('click', () => {
+                window.close();
+            });
+            
+            // Initialize animations
+            document.querySelectorAll('.fade-in').forEach((el, index) => {
+                el.style.animationDelay = `${index * 0.1}s`;
+            });
+        });
+    </script>
+</body>
+</html>
